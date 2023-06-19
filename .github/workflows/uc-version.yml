@@ -60,11 +60,8 @@ jobs:
           name: version-artifact
           path: artifact
 
-      - name: Read Version from File
-        id: read_version
-        run: echo "::set-output name=version::$(cat artifact/version.txt)"
-
       - name: Download Zip
         run: |
-          version=${{ needs.extract_version.outputs.version_file }}
+          cat artifact/version.txt
+          version=$(cat artifact/version.txt)
           echo "Using version: $version"
