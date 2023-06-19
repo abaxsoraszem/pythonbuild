@@ -9,7 +9,7 @@ jobs:
   extract_version:
     runs-on: ubuntu-latest
     outputs:
-      VERSION: ${{ steps.run_script.outputs.VERSION }}
+      version_file: version.txt
     steps:
 
       - name: Set up Python
@@ -25,7 +25,6 @@ jobs:
           python - <<EOF
           import requests
           import re
-          import os
 
           # Download webpage content
           response = requests.get('https://releases.usercentrics.com/loadMoreNews?app_id=nGxJmmsl20682&role=cmpv1%3Bcmpv2%3B&language=EN&user_id=70bb2f11-095e-415d-9712-2cf59a885f98&lastname=Cat&firstname=Blue&category=browser%20ui&publicPage=true&post=false&basePath=%2F%2Freleases.usercentrics.com%2Fen&standaloneLogoUrl=https%3A%2F%2Fstatic.getbeamer.com%2FnGxJmmsl20682%2Flogo_3269.png')
@@ -38,8 +37,9 @@ jobs:
               version = version_match.group(1)
               version = version.replace("Version ", "")  # Remove the "Version " prefix
               print("Version:", version)
-              print("::set-output name=VERSION::" + version)
-              os.environ["VERSION"] = version
+
+              with open("version.txt", "w") as f:
+                  f.write(version)
 
           else:
               print("Version not found.")
@@ -49,7 +49,12 @@ jobs:
     needs: extract_version
     runs-on: ubuntu-latest
     steps:
-      - name: Download GZ
+
+      - name: Read Version from File
+        id: read_version
+        run: echo "::set-output name=version::$(cat version.txt)"
+
+      - name: Download Zip
         run: |
-          version=$VERSION
+          version=${{ needs.extract_version.outputs.version_file }}
           echo "Using version: $version"
