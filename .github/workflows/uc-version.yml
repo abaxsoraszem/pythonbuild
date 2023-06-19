@@ -9,7 +9,7 @@ jobs:
   extract_version:
     runs-on: ubuntu-latest
     outputs:
-      version: ${{ steps.run_script.outputs.version }}
+      VERSION: ${{ steps.run_script.outputs.VERSION }}
     steps:
 
       - name: Set up Python
@@ -38,6 +38,7 @@ jobs:
               version = version_match.group(1)
               version = version.replace("Version ", "")  # Remove the "Version " prefix
               print("Version:", version)
+              print("::set-output name=VERSION::" + version)
               os.environ["VERSION"] = version
 
           else:
