@@ -6,7 +6,7 @@ on:
       - main
 
 jobs:
-  build:
+  extract_version:
     runs-on: ubuntu-latest
     steps:
 
@@ -17,7 +17,7 @@ jobs:
 
       - name: Install requests library
         run: python -m pip install requests
-        
+
       - name: Run Python Script
         run: |
           python - <<EOF
@@ -35,6 +35,17 @@ jobs:
               version = version_match.group(1)
               version = version.replace("Version ", "")  # Remove the "Version " prefix
               print("Version:", version)
+              print("::set-output name=version::" + version)
+
           else:
               print("Version not found.")
           EOF
+
+  download:
+    needs: extract_version
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download GZ
+        run: |
+          version=${{ needs.extract_version.outputs.version }}
+          echo "Using version: $version"
