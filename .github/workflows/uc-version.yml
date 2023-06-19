@@ -1,0 +1,14 @@
+name: Inline Python Code
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run Inline Python Code
+        run: |
+          python -c "print('Hello, GitHub Actions!')"
