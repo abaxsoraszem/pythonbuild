@@ -50,8 +50,18 @@ jobs:
                       previous_version = f.read().strip()
 
               if version != previous_version:
+                  print("Version has changed.", version, previous_version)
+
                   with open("version.txt", "w") as f:
                       f.write(version)
+
+                  # Download JS file
+                  js_url = f"https://app.usercentrics.eu/browser-ui/{version}/bundle.js"
+                  response = requests.get(js_url)
+                  with open("usercentrics.js", "wb") as f:
+                      f.write(response.content)
+                  print("JS file downloaded.")
+
               else:
                   print("Version is the same as previous.")
 
@@ -65,20 +75,8 @@ jobs:
           name: version-artifact
           path: version.txt
 
-  download:
-    needs: extract_version
-    if: steps.extract_version.outputs.run_script == 'success'
-    runs-on: ubuntu-latest
-    steps:
-
-      - name: Download Version Artifact
-        uses: actions/download-artifact@v2
+      - name: Upload JS Bundle
+        uses: actions/upload-artifact@v2
         with:
-          name: version-artifact
-          path: artifact
-
-      - name: Download Zip
-        run: |
-          cat artifact/version.txt
-          version=$(cat artifact/version.txt)
-          echo "Using version: $version"
+          name: uc-bundle-artifact
+          path: usercentrics.js
