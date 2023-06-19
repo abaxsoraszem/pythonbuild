@@ -81,3 +81,56 @@ jobs:
         with:
           name: uc-bundle-artifact
           path: usercentrics.js
+
+  create-pr:
+    needs: extract_version
+
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Download Version Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: version-artifact
+          path: artifact
+
+      # - name: Download Zip
+      #   run: |
+      #     cat artifact/version.txt
+      #     version=$(cat artifact/version.txt)
+      #     echo "Using version: $version"
+
+      - name: Check out abaxsoraszem/spa repository
+        uses: actions/checkout@v2
+        with:
+          repository: abaxsoraszem/spa
+
+      - name: Create New Branch
+        run: |
+          # timestamp=$(date +%s)
+          cd spa
+          git checkout -b uc-update-timestamp
+          git config user.name "abaxsoraszem"
+          git config user.email "abax.soraszem@gmail.com"
+
+      - name: Add usercentrics.js to Repo
+        run: |
+          cd spa
+          # mkdir -p src/bundles
+          cp ../artifact/usercentrics.js src/bundles/usercentrics.js
+
+      - name: Commit and Push Changes
+        run: |
+          cd spa
+          git add .
+          git commit -m "Add usercentrics.js new version"
+          git push origin uc-update-timestamp
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: Add usercentrics.js
+          title: Update usercentrics.js
+          branch: uc-update-timestamp
+          base: main
