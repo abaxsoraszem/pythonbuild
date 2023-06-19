@@ -10,6 +10,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
+      - name: Load Previous Version Artifact
+        id: load_previous_version
+        uses: actions/download-artifact@v2
+        with:
+          name: version-artifact
+          path: previous_version
+
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
@@ -23,6 +30,7 @@ jobs:
           python - <<EOF
           import requests
           import re
+          import os
 
           # Download webpage content
           response = requests.get('https://releases.usercentrics.com/loadMoreNews?app_id=nGxJmmsl20682&role=cmpv1%3Bcmpv2%3B&language=EN&user_id=70bb2f11-095e-415d-9712-2cf59a885f98&lastname=Cat&firstname=Blue&category=browser%20ui&publicPage=true&post=false&basePath=%2F%2Freleases.usercentrics.com%2Fen&standaloneLogoUrl=https%3A%2F%2Fstatic.getbeamer.com%2FnGxJmmsl20682%2Flogo_3269.png')
@@ -36,8 +44,16 @@ jobs:
               version = version.replace("Version ", "")  # Remove the "Version " prefix
               print("Version:", version)
 
-              with open("version.txt", "w") as f:
-                  f.write(version)
+              previous_version = ""
+              if os.path.exists("previous_version/version.txt"):
+                  with open("previous_version/version.txt", "r") as f:
+                      previous_version = f.read().strip()
+
+              if version != previous_version:
+                  with open("version.txt", "w") as f:
+                      f.write(version)
+              else:
+                  print("Version is the same as previous.")
 
           else:
               print("Version not found.")
@@ -51,6 +67,7 @@ jobs:
 
   download:
     needs: extract_version
+    if: steps.extract_version.outputs.run_script == 'success'
     runs-on: ubuntu-latest
     steps:
 
