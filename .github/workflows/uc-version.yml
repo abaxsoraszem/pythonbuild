@@ -10,12 +10,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-      - name: Load Previous Version Artifact
-        id: load_previous_version
-        uses: actions/download-artifact@v2
-        with:
-          name: version-artifact
-          path: previous_version
+      # - name: Load Previous Version Artifact
+      #   id: load_previous_version
+      #   uses: actions/download-artifact@v2
+      #   with:
+      #     name: version-artifact
+      #     path: previous_version
+      #   if-no-files-found: ignore
 
       - name: Set up Python
         uses: actions/setup-python@v2
@@ -45,9 +46,9 @@ jobs:
               print("Version:", version)
 
               previous_version = ""
-              if os.path.exists("previous_version/version.txt"):
-                  with open("previous_version/version.txt", "r") as f:
-                      previous_version = f.read().strip()
+              # if os.path.exists("previous_version/version.txt"):
+              #     with open("previous_version/version.txt", "r") as f:
+              #         previous_version = f.read().strip()
 
               if version != previous_version:
                   print("Version has changed.", version, previous_version)
