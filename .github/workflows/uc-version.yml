@@ -88,12 +88,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-      - name: Download Version Artifact
-        uses: actions/download-artifact@v2
-        with:
-          name: version-artifact
-          path: artifact
-
       # - name: Download Zip
       #   run: |
       #     cat artifact/version.txt
@@ -105,24 +99,33 @@ jobs:
         with:
           repository: abaxsoraszem/spa
 
+
+      - name: Download Version Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: version-artifact
+          path: artifact
+
       - name: Create New Branch
         run: |
+          pwd
+          ls -al
           # timestamp=$(date +%s)
-          cd spa
+          # cd spa
           git checkout -b uc-update-timestamp
           git config user.name "abaxsoraszem"
           git config user.email "abax.soraszem@gmail.com"
 
       - name: Add usercentrics.js to Repo
         run: |
-          cd spa
+          # cd spa
           # mkdir -p src/bundles
           cp ../artifact/usercentrics.js src/bundles/usercentrics.js
 
       - name: Commit and Push Changes
         run: |
-          cd spa
-          git add .
+          # cd spa
+          git add src/bundles/usercentrics.js
           git commit -m "Add usercentrics.js new version"
           git push origin uc-update-timestamp
 
