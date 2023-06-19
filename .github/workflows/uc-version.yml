@@ -25,6 +25,7 @@ jobs:
           python - <<EOF
           import requests
           import re
+          import os
 
           # Download webpage content
           response = requests.get('https://releases.usercentrics.com/loadMoreNews?app_id=nGxJmmsl20682&role=cmpv1%3Bcmpv2%3B&language=EN&user_id=70bb2f11-095e-415d-9712-2cf59a885f98&lastname=Cat&firstname=Blue&category=browser%20ui&publicPage=true&post=false&basePath=%2F%2Freleases.usercentrics.com%2Fen&standaloneLogoUrl=https%3A%2F%2Fstatic.getbeamer.com%2FnGxJmmsl20682%2Flogo_3269.png')
