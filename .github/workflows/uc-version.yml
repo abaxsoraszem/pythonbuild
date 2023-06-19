@@ -8,6 +8,8 @@ on:
 jobs:
   extract_version:
     runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.run_script.outputs.version }}
     steps:
 
       - name: Set up Python
@@ -35,7 +37,7 @@ jobs:
               version = version_match.group(1)
               version = version.replace("Version ", "")  # Remove the "Version " prefix
               print("Version:", version)
-              print("::set-output name=version::" + version)
+              os.environ["VERSION"] = version
 
           else:
               print("Version not found.")
@@ -47,5 +49,5 @@ jobs:
     steps:
       - name: Download GZ
         run: |
-          version=${{ needs.extract_version.outputs.version }}
+          version=$VERSION
           echo "Using version: $version"
