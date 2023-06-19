@@ -120,7 +120,7 @@ jobs:
         run: |
           # cd spa
           # mkdir -p src/bundles
-          cp ../artifact/usercentrics.js src/bundles/usercentrics.js
+          cp ./artifact/usercentrics.js src/bundles/usercentrics.js
 
       - name: Commit and Push Changes
         run: |
