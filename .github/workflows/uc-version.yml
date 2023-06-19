@@ -8,8 +8,6 @@ on:
 jobs:
   extract_version:
     runs-on: ubuntu-latest
-    outputs:
-      version_file: version.txt
     steps:
 
       - name: Set up Python
@@ -45,14 +43,26 @@ jobs:
               print("Version not found.")
           EOF
 
+      - name: Upload Version Artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: version-artifact
+          path: version.txt
+
   download:
     needs: extract_version
     runs-on: ubuntu-latest
     steps:
 
+      - name: Download Version Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: version-artifact
+          path: artifact
+
       - name: Read Version from File
         id: read_version
-        run: echo "::set-output name=version::$(cat version.txt)"
+        run: echo "::set-output name=version::$(cat artifact/version.txt)"
 
       - name: Download Zip
         run: |
