@@ -9,6 +9,23 @@ jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Run Inline Python Code
+      - name: Parse UI version
         run: |
-          python -c "print('Hello, GitHub Actions!')"
+          python - <<EOF
+          import requests
+          import re
+
+          # Download webpage content
+          response = requests.get('https://releases.usercentrics.com/en?category=browser+ui&role=cmpv1%3Bcmpv2%3B')
+          html_content = response.text
+
+          # Parse version from HTML body using regex
+          version_pattern = r'<h4.*?>(.*?)<\/h4>'
+          version_match = re.search(version_pattern, html_content)
+          if version_match:
+              version = version_match.group(1)
+              print("Version:", version)
+          else:
+              print("Version not found.")
+
+          EOF
