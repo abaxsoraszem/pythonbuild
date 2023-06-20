@@ -1,14 +1,18 @@
-name: Extract Version
+name: UC update check
 
 on:
   push:
     branches:
       - main
-
+  workflow_dispatch:
+    
 jobs:
   extract_version:
     runs-on: ubuntu-latest
     steps:
+
+      - name: Set up Git
+        uses: actions/checkout@v3
 
       - name: Set up Python
         uses: actions/setup-python@v2
@@ -38,9 +42,9 @@ jobs:
               print("Version:", version)
 
               previous_version = ""
-              # if os.path.exists("previous_version/usercentrics.version"):
-              #     with open("previous_version/usercentrics.version", "r") as f:
-              #         previous_version = f.read().strip()
+              if os.path.exists("src/bundles/usercentrics.version"):
+                  with open("src/bundles/usercentrics.version", "r") as f:
+                      previous_version = f.read().strip()
 
               if version != previous_version:
                   print("Version has changed.", version, previous_version)
@@ -103,8 +107,8 @@ jobs:
         run: |
           # cd spa
           # mkdir -p src/bundles
-          cp ./usercentrics.js src/bundles/usercentrics.js
-          cp ./usercentrics.version src/bundles/usercentrics.version
+          mv ./usercentrics.js src/bundles/usercentrics.js
+          mv ./usercentrics.version src/bundles/usercentrics.version
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
