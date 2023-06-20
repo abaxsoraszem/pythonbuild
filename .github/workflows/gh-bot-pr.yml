@@ -22,13 +22,16 @@ jobs:
           git checkout new-branch
           git config user.name 'github-actions[bot]'
           git config user.email 'github-actions[bot]@users.noreply.github.com'
-      
-      - name: Add uc.txt File
-        run: |
           git add uc.txt
           git commit -m "Add uc.txt"
-          git push -u origin new-branch
-      
+
+          
+      - name: Push changes
+        uses: ad-m/github-push-action@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          branch: ${{ github.ref }}
+
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         with:
