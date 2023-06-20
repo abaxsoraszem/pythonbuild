@@ -1,9 +1,9 @@
 name: UC update check
 
 on:
-  push:
-    branches:
-      - main
+  # push:
+  #   branches:
+  #     - main
   workflow_dispatch:
     
 jobs:
@@ -61,9 +61,11 @@ jobs:
 
               else:
                   print("Version is the same as previous.")
+                  sys.exit(1)
 
           else:
               print("Version not found.")
+              sys.exit(1)
           EOF
 
       - name: Upload Version Artifact
