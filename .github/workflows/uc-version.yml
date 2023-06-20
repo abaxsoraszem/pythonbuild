@@ -10,14 +10,6 @@ jobs:
     runs-on: ubuntu-latest
     steps:
 
-      # - name: Load Previous Version Artifact
-      #   id: load_previous_version
-      #   uses: actions/download-artifact@v2
-      #   with:
-      #     name: version-artifact
-      #     path: previous_version
-      #   if-no-files-found: ignore
-
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
@@ -46,14 +38,14 @@ jobs:
               print("Version:", version)
 
               previous_version = ""
-              # if os.path.exists("previous_version/version.txt"):
-              #     with open("previous_version/version.txt", "r") as f:
+              # if os.path.exists("previous_version/usercentrics.version"):
+              #     with open("previous_version/usercentrics.version", "r") as f:
               #         previous_version = f.read().strip()
 
               if version != previous_version:
                   print("Version has changed.", version, previous_version)
 
-                  with open("version.txt", "w") as f:
+                  with open("usercentrics.version", "w") as f:
                       f.write(version)
 
                   # Download JS file
@@ -74,7 +66,7 @@ jobs:
         uses: actions/upload-artifact@v2
         with:
           name: version-artifact
-          path: version.txt
+          path: usercentrics.version
 
       - name: Upload JS Bundle
         uses: actions/upload-artifact@v2
@@ -90,49 +82,35 @@ jobs:
 
       # - name: Download Zip
       #   run: |
-      #     cat artifact/version.txt
-      #     version=$(cat artifact/version.txt)
+      #     cat artifact/usercentrics.version
+      #     version=$(cat artifact/usercentrics.version)
       #     echo "Using version: $version"
 
-      - name: Check out abaxsoraszem/spa repository
-        uses: actions/checkout@v2
-        with:
-          repository: abaxsoraszem/spa
+      - name: Set up Git
+        uses: actions/checkout@v3
 
-
-      - name: Download Version Artifact
+      - name: Download JS Artifact
         uses: actions/download-artifact@v2
         with:
           name: uc-bundle-artifact
 
-      - name: Create New Branch
-        run: |
-          pwd
-          ls -al
-          # timestamp=$(date +%s)
-          # cd spa
-          git checkout -b uc-update-timestamp
-          git config user.name "abaxsoraszem"
-          git config user.email "abax.soraszem@gmail.com"
+      - name: Download Version Artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: version-artifact
 
-      - name: Add usercentrics.js to Repo
+      - name: Move files to correct location
         run: |
           # cd spa
           # mkdir -p src/bundles
           cp ./usercentrics.js src/bundles/usercentrics.js
-
-      - name: Commit and Push Changes
-        run: |
-          # cd spa
-          git add src/bundles/usercentrics.js
-          git commit -m "Add usercentrics.js new version"
-          git push origin uc-update-timestamp
+          cp ./usercentrics.version src/bundles/usercentrics.version
 
       - name: Create Pull Request
         uses: peter-evans/create-pull-request@v3
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: Add usercentrics.js
-          title: Update usercentrics.js
-          branch: uc-update-timestamp
+          commit-message: Add new Usercentrics version
+          title: Add new Usercentrics version
+          branch: uc-update
           base: main
