@@ -20,6 +20,8 @@ jobs:
         run: |
           git branch new-branch
           git checkout new-branch
+          git config user.name 'github-actions[bot]'
+          git config user.email 'github-actions[bot]@users.noreply.github.com'
       
       - name: Add uc.txt File
         run: |
