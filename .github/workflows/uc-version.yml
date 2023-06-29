@@ -5,11 +5,9 @@ on:
   #   branches:
   #     - main
   workflow_dispatch:
-    inputs:
-      uc_bundle_path:
-        description: 'UC bundle path'
-        required: true
-        default: 'src/bundles/usercentrics.version'
+
+env:
+  UC_BUNDLE_PATH: src/bundles/usercentrics.version
 
 jobs:
   previous_version:
@@ -29,8 +27,6 @@ jobs:
 
       - name: Run Python Script
         run: |
-          UC_BUNDLE_PATH=${{ github.event.inputs.uc_bundle_path }}
-
           python - <<EOF
           import requests
           import re
