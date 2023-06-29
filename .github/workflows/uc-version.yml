@@ -5,7 +5,12 @@ on:
   #   branches:
   #     - main
   workflow_dispatch:
-    
+    inputs:
+      uc_bundle_path:
+        description: 'UC bundle path'
+        required: true
+        default: 'src/bundles/usercentrics.version'
+
 jobs:
   previous_version:
     runs-on: ubuntu-latest
@@ -24,6 +29,8 @@ jobs:
 
       - name: Run Python Script
         run: |
+          UC_BUNDLE_PATH=${{ github.event.inputs.uc_bundle_path }}
+
           python - <<EOF
           import requests
           import re
@@ -33,11 +40,15 @@ jobs:
 
 
           previous_version = ""
-          if os.path.exists("src/bundles/usercentrics.version"):
-              with open("src/bundles/usercentrics.version", "r") as f:
+          if os.path.exists("$UC_BUNDLE_PATH"):
+              with open("$UC_BUNDLE_PATH", "r") as f:
                   previous_version = f.read().strip()
+                  print("Version currently checked in.", previous_version)
+
                   with open("previous.version", "w") as f:
                     f.write(previous_version)
+          else:
+            print("Check in version in the system not found. Verify path $UC_BUNDLE_PATH")
              
           EOF
 
