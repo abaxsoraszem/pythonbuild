@@ -49,6 +49,7 @@ jobs:
 
 
   extract_version:
+    needs: previous_version
     runs-on: ubuntu-latest
     steps:
 
